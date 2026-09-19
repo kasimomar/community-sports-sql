@@ -1,0 +1,6 @@
+check_name,violations
+attendance_program_or_month_mismatch,0
+attendance_on_canceled_session,0
+invalid_refund_reference,0
+refunds_exceed_charge,0
+program_capacity_exceeded,0

@@ -1,0 +1,9 @@
+month,program_name,monthly_capacity,enrolled,available_seats,utilization_pct
+2026-01-01,Weekend Soccer,4,3,1,75.0
+2026-01-01,After-School Multi-Sport,3,2,1,66.67
+2026-02-01,Weekend Soccer,4,3,1,75.0
+2026-02-01,After-School Multi-Sport,3,2,1,66.67
+2026-03-01,Weekend Soccer,4,2,2,50.0
+2026-03-01,After-School Multi-Sport,3,2,1,66.67
+2026-04-01,Weekend Soccer,4,2,2,50.0
+2026-04-01,After-School Multi-Sport,3,1,2,33.33
