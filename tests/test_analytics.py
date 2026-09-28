@@ -1,7 +1,9 @@
+import csv
 import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from analyze import build_database, query, run, validate
 
 
@@ -70,6 +72,33 @@ class AnalyticsTests(unittest.TestCase):
         self.db.execute('INSERT INTO attendance VALUES (1,4,1)')
         with self.assertRaisesRegex(ValueError, 'attendance_program_or_month_mismatch'):
             validate(self.db)
+
+    def test_empty_report_replaces_old_rows_and_still_exports_database(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            run(root)
+            attendance = root / 'attendance.csv'
+            with attendance.open(newline='') as handle:
+                populated = list(csv.reader(handle))
+            self.assertGreater(len(populated), 1)
+
+            # No held sessions is valid: an absent rate is not zero attendance.
+            self.db.execute('DELETE FROM attendance')
+            self.db.execute("UPDATE sessions SET status='canceled'")
+            self.db.commit()
+            with patch('analyze.build_database', return_value=self.db):
+                run(root)
+
+            with attendance.open(newline='') as handle:
+                self.assertEqual(list(csv.reader(handle)), [populated[0]])
+            self.assertEqual(
+                {path.name for path in root.glob('*.csv')},
+                {'attendance.csv', 'capacity.csv', 'data_quality.csv',
+                 'monthly_revenue.csv', 'retention.csv'},
+            )
+            with sqlite3.connect(root / 'sports.sqlite') as db:
+                self.assertEqual(db.execute("SELECT COUNT(*) FROM sessions WHERE status='held'").fetchone()[0], 0)
+                self.assertEqual(db.execute('SELECT COUNT(*) FROM participants').fetchone()[0], 8)
 
     def test_exports_are_repeatable_and_database_is_queryable(self):
         with tempfile.TemporaryDirectory() as directory:
