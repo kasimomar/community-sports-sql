@@ -15,7 +15,7 @@ python3 analyze.py
 python3 -m unittest discover -s tests -v
 ```
 
-The runner creates a fresh database, checks the data, and writes CSV reports and `sports.sqlite` to `build/`. Running it again replaces the generated outputs. The [saved CSVs](reports/csv) let you inspect the results without installing anything.
+The runner creates a fresh database, checks the data, and writes CSV reports and `sports.sqlite` to `build/`. Running it again replaces the generated outputs. Reports with no results still produce a CSV header, without placeholder rows or invented zero values. The remaining reports and database export continue normally. The [saved CSVs](reports/csv) let you inspect the results without installing anything.
 
 If you have the SQLite CLI:
 
@@ -77,6 +77,6 @@ Total collection is **$960**. Of the five January participants, three return in 
 
 ## Tests and next steps
 
-The tests cover refund timing, failed charges, zero denominators, duplicate and orphan records, missing attendance, canceled sessions, participants in multiple programs, future months, and repeatable exports. CI also compares newly generated CSVs with the saved results.
+The tests cover refund timing, failed charges, zero denominators, duplicate and orphan records, missing attendance, canceled sessions, participants in multiple programs, future months, repeatable exports, and replacing a populated report with a header-only result. CI also compares newly generated CSVs with the saved results.
 
 Useful extensions would be enrollment cancellations, effective-dated capacity, an import process that separates invalid records, and a larger fixture for comparing query plans. A dashboard would sit on top of these metric definitions rather than redefine them.

@@ -34,11 +34,11 @@ def run(output):
         validate(db)
         output.mkdir(parents=True, exist_ok=True)
         for path in sorted((ROOT / 'sql/queries').glob('*.sql')):
-            rows = query(db, path.stem)
-            with (output / f'{path.stem}.csv').open('w', newline='') as handle:
-                writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-                writer.writeheader()
-                writer.writerows(rows)
+            cursor = db.execute(path.read_text())
+            with (output / f'{path.stem}.csv').open('w', newline='', encoding='utf-8') as handle:
+                writer = csv.writer(handle)
+                writer.writerow([column[0] for column in cursor.description])
+                writer.writerows(cursor)
         with sqlite3.connect(output / 'sports.sqlite') as destination:
             db.backup(destination)
     finally:
